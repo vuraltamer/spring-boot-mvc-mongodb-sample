@@ -1,0 +1,370 @@
+<!DOCTYPE HTML>
+
+<head>
+
+    <title>user management</title>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    <style>
+        .toppaddiv {
+            width: 1100px;
+            height: 280px;
+            border-style: inset;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .closablediv {
+            width: 1100px;
+            height: 200px;
+            border-style: inset;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .modaldiv {
+            width: 600px;
+            height: 300px;
+            border-style: inset;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .butondiv {
+            padding-bottom: 10px;
+        }
+
+        .buttonstyle {
+            background-color: #555555;
+            border: none;
+            color: white;
+            width: 150px;
+            border-radius: 2px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+
+    <div class="w3-container w3-blue">
+        <h1>User Management Tool - Spring Boot- MVC- MongoDB</h1>
+    </div>
+
+    <div class="toppaddiv">
+        <div class="butondiv"><button class="buttonstyle" type="button" onclick="loadUserTable()">Get Users</button>
+            <button class="buttonstyle" type="button" onclick="redirectToSwagger()">Go to Swagger</button></div>
+
+        <table id="usertable" border="1" width="1000">
+            <thead>
+            <th width="300">id</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th width="35"><i class="fas fa-plus-square" style="color:green" onclick="showSaveUserDiv()"></i></th>
+            </thead>
+
+            <tbody id="usertablebody">
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="closablediv" id="saveuserdiv" style="visibility:hidden">
+
+        <form id="saveuserform">
+
+            <table border="1">
+                <tr><td>First Name:</td><td><input type="text" name="firstname"></td></tr>
+                <tr><td>Last Name:</td><td><input type="text" name="lastname"></td></tr>
+                <tr><td>Phone Number:</td><td><input type="text" name="msisdn"></td></tr>
+                <tr><td>Email:</td><td><input type="text" name="email"></td></tr>
+            </table>
+
+            <button class="buttonstyle" type="button" onclick="saveUser()">Save</button>
+        </form>
+
+    </div>
+
+    <div class="w3-container">
+        <div id="userupdatemodal" class="w3-modal">
+            <div class="w3-modal-content">
+                <div class="w3-container w3-blue">
+                    <h1>Update User</h1>
+                </div>
+                <div class="modaldiv">
+                    <span onclick="document.getElementById('userupdatemodal').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                    <form id="updateuserform">
+
+                        <table border="1">
+                            <tr><td>First Name:</td><td><input id="firstname" type="text" name="firstname"></td></tr>
+                            <tr><td>Last Name:</td><td><input id="lastname" type="text" name="lastname"></td></tr>
+                            <tr><td>Email:</td><td><input id="email" type="text" name="email"></td></tr>
+                            <tr><td>Phone Number:</td><td><input id="msisdn" type="text" name="msisdn"></td></tr>
+                            <tr style="visibility: hidden"><input id="identifier" type="hidden" name="identifier"></tr>
+
+                            <tr>
+                                <td><div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div></td>
+                                <td><button class="buttonstyle" id="updatebutton" type="button" onclick="updateUser()">Update</button></td>
+                            </tr>
+                        </table>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="deleteusermodal" class="w3-modal">
+            <div class="w3-modal-content">
+                <div class="w3-container w3-blue">
+                    <h1>Delete User</h1>
+                </div>
+                <div class="w3-container">
+                    <input id="deleteidentifier" type="hidden" name="identifier">
+                    <div style="padding: 10px"><a>This user will be deleted. Are you sure?</a></div> <br>
+                    <button class="buttonstyle" id="deleteuserbutton" type="button" onclick="deleteUser(document.getElementById('deleteidentifier').value)">Yes</button>
+                    <button class="buttonstyle" id="canceluserbutton" type="button" onclick="document.getElementById('deleteusermodal').style.display='none'">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+
+<script type="text/javascript">
+
+    const WS_URL = "http://localhost:8080";
+
+
+    /*
+     * http://localhost:8080/person/?id={id}
+     * Find any user with identifier
+     * Request Type : GET
+     *
+     * */
+    function findUser(index) {
+
+        return $.ajax({
+            type: "GET",
+            url: "" + WS_URL + "/person/?id=" + index + "",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (result) {
+            },
+            error: function (response) {
+                alert('eror: ' + response.responseJSON.errors[0].defaultMessage);
+            }
+        });
+    }
+
+    /*
+    * http://localhost:8080/person/list
+    * Find All User
+    * Request Type : GET
+    *
+    * */
+    function getUsers() {
+
+        return $.ajax({
+            type: "GET",
+            url: "" + WS_URL + "/person/list",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (result) {
+            },
+            error: function (response) {
+                alert('eror');
+            }
+        });
+    }
+
+    /*
+    * http://localhost:8080/person/save
+    * Save user
+    * Request Type : POST
+    *
+    * */
+    function saveUser() {
+
+        var userForm = $("#saveuserform").serializeArray().reduce(function(a, x) {
+            a[x.name] = x.value;
+            return a;
+        }, {});
+
+        var jsonObject = JSON.stringify(userForm);
+
+        $.ajax({
+            type: "POST",
+            url: "" + WS_URL + "/person/save",
+            dataType: "json",
+            contentType : "application/json",
+            data: jsonObject,
+            success: function(){
+                loadUserTable();
+                alert('succes')
+            },
+            error: function (response) {
+                alert('eror: ' + response.responseJSON.errors[0].defaultMessage);
+            }
+        });
+
+    }
+
+    /*
+    * http://localhost:8080/person/user
+    * Delete any user with id
+    * Request Type : GET
+    *
+    * */
+    function deleteUser(index) {
+
+        $.ajax({
+            type: "GET",
+            url: "" + WS_URL + "/person/delete?id=" + index +"",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (result) {
+                loadUserTable();
+                document.getElementById('deleteusermodal').style.display = "none";
+                alert('succes')
+            },
+            error: function (response) {
+                alert('eror :' + response.responseJSON.errors[0].defaultMessage);
+            }
+        });
+
+    }
+
+    /*
+    * http://localhost:8080/person/update
+    * Update any user
+    * Request Type : POST
+    *
+    * */
+    function updateUser() {
+
+        if (getCaptcha() == true ) {
+
+            var userForm = $("#updateuserform").serializeArray().reduce(function (a, x) {
+                a[x.name] = x.value;
+                return a;
+            }, {});
+
+            var jsonObject = JSON.stringify(userForm);
+
+            $.ajax({
+                type: "POST",
+                url: "" + WS_URL + "/person/update",
+                dataType: "json",
+                contentType: "application/json",
+                data: jsonObject,
+                success: function () {
+                    loadUserTable();
+                    document.getElementById('userupdatemodal').style.display = "none";
+                    alert('succes');
+                },
+                error: function (response) {
+                    alert('eror: ' + response.responseJSON.errors[0].defaultMessage);
+                }
+            });
+
+        }
+
+    }
+
+    function loadUserTable() {
+
+        document.getElementById("usertablebody").innerHTML = '<tbody></tbody>';
+
+        var mydata = getUsers().responseJSON;
+        var tableRef = document.getElementById('usertable').getElementsByTagName('tbody')[0];
+
+        for(var i in mydata)
+        {
+            var newRow = tableRef.insertRow(tableRef.rows.length);
+            var newCell;
+            var newText;
+
+            appendNewCell(newRow, newCell, newText, 0, mydata[i].identifier);
+            appendNewCell(newRow, newCell, newText, 1, mydata[i].firstname);
+            appendNewCell(newRow, newCell, newText, 2, mydata[i].lastname);
+            appendNewCell(newRow, newCell, newText, 3, mydata[i].msisdn);
+            appendNewCell(newRow, newCell, newText, 4, mydata[i].email);
+            appendButtons(newRow, newCell, 5, mydata[i].identifier);
+
+        }
+    }
+
+    function showUpdateModal(id) {
+        document.getElementById('userupdatemodal').style.display='block';
+
+        var updateUser = findUser(id).responseJSON;
+        var updateUserForm = document.getElementById('updateuserform');
+
+        document.getElementById("firstname").value = updateUser.firstname;
+        document.getElementById("lastname").value = updateUser.lastname;
+        document.getElementById("msisdn").value = updateUser.msisdn;
+        document.getElementById("email").value = updateUser.email;
+        document.getElementById("identifier").value = updateUser.identifier;
+
+    }
+
+    function showDeleteModal(id) {
+        document.getElementById('deleteusermodal').style.display='block';
+
+        document.getElementById("deleteidentifier").value = id;
+
+    }
+
+    function showSaveUserDiv() {
+        document.getElementById("saveuserdiv").style.visibility = "visible";
+    }
+
+    function appendNewCell(newRow, newCell, newText, column, value) {
+        newCell = newRow.insertCell(column);
+        newText = document.createTextNode(value);
+        newCell.appendChild(newText);
+    }
+
+    function appendButtons(newRow, newCell, columnindex, id) {
+        newCell = newRow.insertCell(columnindex);
+        newCell.innerHTML =
+            "<i onclick='showUpdateModal(" +'"'+ id + '"' +")' class=\"fas fa-edit\" style=\"color:darkblue\"></i>" +
+            "<i onclick='showDeleteModal("+'"'+  id + '"' +")' class=\"fas fa-trash-alt\" style=\"color:darkred\"></i>";
+    }
+
+    function getCaptcha()
+    {
+        if(grecaptcha.getResponse().length == 0) {
+            alert('Captcha should be valid!');
+            return false;
+        }
+        return true;
+    }
+
+    function redirectToSwagger() {
+
+        var win = window.open("" + WS_URL + "/swagger-ui.html#/person-controller", '_blank');
+        win.focus();
+    }
+
+</script>
+
+</html>

@@ -13,6 +13,6 @@ public interface BaseRepository<T extends BaseEntity, PK extends Serializable> e
 
     void deleteByIdentifier(String identifier);
 
-    Optional<Person> findByIdentifier(String identifier);
+    Optional<T> findByIdentifier(String identifier);
 
 }

@@ -34,7 +34,7 @@ public abstract class BaseService<T extends BaseEntity, PK extends Serializable>
     public T save(T entity) {
         entity.setIdentifier(UUID.randomUUID().toString());
         entity.setCreateDate(new Date());
-        return mongoTemplate.save(entity);
+        return getRepository().save(entity);
     }
 
     /*
@@ -44,7 +44,7 @@ public abstract class BaseService<T extends BaseEntity, PK extends Serializable>
     @Transactional
     public T update(T entity) {
         entity.setUpdateDate(new Date());
-        return mongoTemplate.save(entity);
+        return getRepository().save(entity);
     }
 
 

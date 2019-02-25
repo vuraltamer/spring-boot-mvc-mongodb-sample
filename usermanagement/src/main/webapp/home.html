@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+
+<head>
+
+    <title>user management</title>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <link rel="stylesheet" href="/static/base.css"  />
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    <script src="/static/base.js"></script>
+
+
+</head>
+
+<body>
+
+    <div class="w3-container w3-blue">
+        <h1>User Management Tool - Spring Boot- MVC- MongoDB</h1>
+    </div>
+
+    <div class="toppaddiv">
+        <div class="butondiv"><button class="buttonstyle" type="button" onclick="loadUserTable()">Get Users</button>
+            <button class="buttonstyle" type="button" onclick="redirectToSwagger()">Go to Swagger</button></div>
+
+        <table id="usertable" border="1" width="1000">
+            <thead>
+            <th width="300">id</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th width="35"><i class="fas fa-plus-square" style="color:green" onclick="showSaveUserDiv()"></i></th>
+            </thead>
+
+            <tbody id="usertablebody">
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="closablediv" id="saveuserdiv" style="visibility:hidden">
+
+        <form id="saveuserform">
+
+            <table border="1">
+                <tr><td>First Name:</td><td><input type="text" name="firstname"></td></tr>
+                <tr><td>Last Name:</td><td><input type="text" name="lastname"></td></tr>
+                <tr><td>Phone Number:</td><td><input type="text" name="msisdn"></td></tr>
+                <tr><td>Email:</td><td><input type="text" name="email"></td></tr>
+            </table>
+
+            <button class="buttonstyle" type="button" onclick="saveUser()">Save</button>
+        </form>
+
+    </div>
+
+    <div class="w3-container">
+        <div id="userupdatemodal" class="w3-modal">
+            <div class="w3-modal-content">
+                <div class="w3-container w3-blue">
+                    <h1>Update User</h1>
+                </div>
+                <div class="modaldiv">
+                    <span onclick="document.getElementById('userupdatemodal').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                    <form id="updateuserform">
+
+                        <table border="1">
+                            <tr><td>First Name:</td><td><input id="firstname" type="text" name="firstname"></td></tr>
+                            <tr><td>Last Name:</td><td><input id="lastname" type="text" name="lastname"></td></tr>
+                            <tr><td>Email:</td><td><input id="email" type="text" name="email"></td></tr>
+                            <tr><td>Phone Number:</td><td><input id="msisdn" type="text" name="msisdn"></td></tr>
+                            <tr style="visibility: hidden"><input id="identifier" type="hidden" name="identifier"></tr>
+
+                            <tr>
+                                <td><div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div></td>
+                                <td><button class="buttonstyle" id="updatebutton" type="button" onclick="updateUser()">Update</button></td>
+                            </tr>
+                        </table>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="deleteusermodal" class="w3-modal">
+            <div class="w3-modal-content">
+                <div class="w3-container w3-blue">
+                    <h1>Delete User</h1>
+                </div>
+                <div class="w3-container">
+                    <input id="deleteidentifier" type="hidden" name="identifier">
+                    <div style="padding: 10px"><a>This user will be deleted. Are you sure?</a></div> <br>
+                    <button class="buttonstyle" id="deleteuserbutton" type="button" onclick="deleteUser(document.getElementById('deleteidentifier').value)">Yes</button>
+                    <button class="buttonstyle" id="canceluserbutton" type="button" onclick="document.getElementById('deleteusermodal').style.display='none'">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

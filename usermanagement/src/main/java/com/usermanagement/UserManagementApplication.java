@@ -10,8 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -23,7 +22,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableMongoRepositories("com.usermanagement.dao.repo")
 @EnableSwagger2
-public class UserManagementApplication extends WebMvcConfigurerAdapter {
+public class UserManagementApplication {
 
 	@Autowired
 	private PersonService service;
@@ -79,6 +78,15 @@ public class UserManagementApplication extends WebMvcConfigurerAdapter {
 		builder.title("User Management API through Swagger UI").version("1.0").license("(C) Copyright Test")
 				.description("User Management API Rest Web Services");
 		return builder.build();
+	}
+
+	@Bean
+	public InternalResourceViewResolver viewResolver() {
+		InternalResourceViewResolver bean = new InternalResourceViewResolver();
+		bean.setPrefix("/");
+		bean.setSuffix(".html");
+
+		return bean;
 	}
 
 }

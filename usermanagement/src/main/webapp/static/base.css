@@ -1,0 +1,39 @@
+.toppaddiv {
+    width: 1100px;
+    height: 280px;
+    border-style: inset;
+    margin: 20px;
+    padding: 20px;
+}
+
+.closablediv {
+    width: 1100px;
+    height: 200px;
+    border-style: inset;
+    margin: 20px;
+    padding: 20px;
+}
+
+.modaldiv {
+    width: 600px;
+    height: 300px;
+    border-style: inset;
+    margin: 20px;
+    padding: 20px;
+}
+
+.butondiv {
+    padding-bottom: 10px;
+}
+
+.buttonstyle {
+    background-color: #555555;
+    border: none;
+    color: white;
+    width: 150px;
+    border-radius: 2px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
